@@ -1,0 +1,20 @@
+# Add to work
+
+    * Add a deck of cards
+        - The deck will have 104 cards in total, which will allow 'x' amount of card to be drawn per turn.
+
+    * Add bonus cards
+        - Bonus cards allow the player to add 1 bonus to a card which will increase the cards stats such as health, attack, defense.
+
+    * Add cursed cards
+        - Cursed cards allows the player to lower the stats of cards or even prevent cards from playing durning the game.
+
+# Questions
+
+    * Should I allow the player to flip their own cards? 
+        - The idea is to allow the player to decide if a card needs to be active durning play.
+
+# Bugs to fix
+
+    _ Increase the number of xp per level up.
+    * Prevent the cards from overlapping.

@@ -5,7 +5,6 @@ from CardDeck.cardAssets import *
 class CardType(Enum):
     STANDARD = "Standard" # Normal playing card
     BONUS = "Bonus" # Adds to card's attributes
-    CURSED = "Cursed" # Removes attributes or disables cards
     
 class CardRarity(Enum):
     COMMON = ("gray", (128, 128, 128), 0.909)    # 90.9% chance
@@ -155,6 +154,7 @@ def colorize(image, newColor):
     return colorized
 
 class Cards(pygame.sprite.Sprite):
+    # Class-level cache for placeholder images
     _placeholder_cache = {}
     def __init__(self, position: Tuple[int, int], scale: Tuple[int, int], card_type: CardType, face_image: Optional[str] = None, stats: Optional[CardStats] = None, name: str = "Unknown Card"):
         super().__init__()
@@ -216,9 +216,8 @@ class Cards(pygame.sprite.Sprite):
                 face = self._get_placeholder_image()
         else:
             face = self._get_placeholder_image()
-        # Apply color tinting
-        darkened_color = self.darken_color(self.border_color)
-        self.face_image = colorize(face.convert_alpha(), darkened_color)
+        # Store original face image without color modification
+        self.face_image = face.convert_alpha()
 
     def _get_placeholder_image(self) -> pygame.Surface:
         cache_key = (self.width, self.height)
@@ -230,7 +229,6 @@ class Cards(pygame.sprite.Sprite):
         return Cards._placeholder_cache[cache_key]
 
     def darken_color(self, color):
-        # Darken a color by 40%
         return tuple(int(c * 0.6) for c in color[:3])
     
     def _determine_rarity(self):
@@ -247,10 +245,15 @@ class Cards(pygame.sprite.Sprite):
         card_canvas = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
         # Draw border
         pygame.draw.rect(card_canvas, self.border_color, card_canvas.get_rect(), self.border_thickness)
-        # Draw face image
+        # Draw face image with color overlay for card dyeing effect
         if self.face_image:
             face_rect = self.face_image.get_rect(center=(self.width // 2, self.height // 2))
             card_canvas.blit(self.face_image, face_rect)
+            # Apply color overlay to dye the card area (not replace the image)
+            dye_color = self.darken_color(self.border_color)
+            overlay = pygame.Surface((self.face_image.get_width(), self.face_image.get_height()), pygame.SRCALPHA)
+            overlay.fill((*dye_color, 80))  # Semi-transparent overlay (80/255 alpha)
+            card_canvas.blit(overlay, face_rect, special_flags=pygame.BLEND_MULT)
         # Draw stats icons
         self.icon_renderer.draw_icon(icon_unicode='\uf004', icon_color=pygame.Color("red"), position=(15, 15), surface=card_canvas, value=self.stats.health)
         self.icon_renderer.draw_icon(icon_unicode='\uf6e3', icon_color=pygame.Color("blue"), position=(15, self.height - 40), surface=card_canvas, value=self.stats.attack)
