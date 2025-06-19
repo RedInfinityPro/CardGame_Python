@@ -27,14 +27,13 @@ class Application:
         self.pause_menu.get_pause_menu()
         # cards
         self.all_sprites = pygame.sprite.Group()
-        card1 = Cards(position=(100, 100), scale=(100, 125), card_type="Standard", face_image="Assets\cardFront.png")
-        card2 = Cards(position=(210, 100), scale=(100, 125), card_type="Standard", face_image=None)
-        self.all_sprites.add(card1)
-        self.all_sprites.add(card2)
+        for x in range(11):
+            card = Cards(position=((110 * x) + 80, 100), scale=(100, 125), card_type="Standard", face_image="Assets\cardFront.png") # gray
+            self.all_sprites.add(card)
         
     def run(self):
         while self.running:
-            dt = self.clock.tick(64) / (100.0)
+            dt = self.clock.tick(64) / 100.0
             events = pygame.event.get()
             for event in events:
                 if event.type == pygame.QUIT:
