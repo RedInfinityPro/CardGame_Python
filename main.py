@@ -26,10 +26,11 @@ class Application:
         self.pause_menu = PauseMenu(screen=self.screen, width=self.screenWidth, height=self.screenHeight)
         self.pause_menu.get_pause_menu()
         # cards
-        self.all_sprites = pygame.sprite.Group()
-        for x in range(11):
-            card = Cards(position=((110 * x) + 80, 100), scale=(100, 125), card_type="Standard", face_image="Assets\cardFront.png") # gray
-            self.all_sprites.add(card)
+        self.all_sprites = []
+        self.card1 = Cards(position=(100, 100), scale=(100, 125), card_type='Standard', face_image="Assets\cardFront.png")
+        self.card2 = Cards(position=(300, 100), scale=(100, 125), card_type='Bonus', face_image="Assets\cardFront.png")
+        self.all_sprites.append(self.card1)
+        self.all_sprites.append(self.card2)
         
     def run(self):
         while self.running:
@@ -49,8 +50,8 @@ class Application:
                         if self.main_menu.play:
                             self.pause_menu.resume_game = not(self.pause_menu.resume_game)
                 # cards
-                for card in self.all_sprites:
-                    card.handle_event(event)
+                for cards in self.all_sprites:
+                    cards.handle_event(event)
             # menu
             if not self.main_menu.play or self.pause_menu.exit_to_main:
                 self.main_menu.play = False
@@ -62,9 +63,11 @@ class Application:
                 self.pause_menu.pause_menu.draw(self.screen)
             else:
                 self.screen.blit(self.background_surface, (0, 0))
-                self.all_sprites.update(dt)
-                for card in self.all_sprites:
-                    card.draw(self.screen)
+                # self.all_sprites.update(dt)
+                for cards in self.all_sprites:
+                    cards.update(dt)
+                    cards.draw(screen=self.screen)
+                    
             self.clock.tick(64)
             pygame.display.flip()
             pygame.display.update()
